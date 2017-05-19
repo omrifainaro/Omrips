@@ -16,12 +16,7 @@ int main() {
 	}
 	while (fread(opcode, sizeof(char), INSTRUCTION_SIZE, f) >= INSTRUCTION_SIZE) {
 		int i = 0;
-		//for (; i < INSTRUCTION_SIZE; i++) {
-		//	printf("%x\n", opcode[i], opcode[i]);
-		//}
-		//getStringHexValue(opcode, INSTRUCTION_SIZE);
-		//printf("%d\n", htoi(opcode, INSTRUCTION_SIZE));
-		inst = newInstruction(asciiHexValue(opcode, INSTRUCTION_SIZE));
+		inst = newInstruction(*(unsigned int*)opcode);
 		printInstruction(inst);
 	}
 	fclose(f);
