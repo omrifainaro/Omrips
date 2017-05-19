@@ -1,7 +1,8 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
+#include <stdio.h>
 #include <stdlib.h>
-#include "constants.h"
+#include "Constants.h"
 
 static int BASE_ADDRESS = 0x80000000;
 
@@ -94,4 +95,5 @@ void printInstruction(INSTRUCTION* inst);
 char* getIJInstructionName(unsigned char op, format* f);
 char* getRInsructionName(INSTRUCTION* inst);
 static void advancePC() { BASE_ADDRESS += 0x8; }
+
 #endif
