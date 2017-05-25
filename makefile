@@ -1,4 +1,4 @@
 all: Main.c
-	gcc Main.c Instruction.c -include Utils.h Constants.h Instruction.h -o omrips
+	gcc Main.c Instruction.c Constants.h Utils.h
 clean:
 	$(RM) omrips
