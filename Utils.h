@@ -1,6 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 void reverseString(char* str, int size){
 	int i = 0, j = size-1;
 	char c = 0;
@@ -10,6 +13,5 @@ void reverseString(char* str, int size){
 		str[j] = c;
 	}
 }
-
 
 #endif

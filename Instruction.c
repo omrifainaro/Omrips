@@ -17,26 +17,24 @@ INSTRUCTION* newInstruction(unsigned int opcode) {
 		inst->body.R.rd = (opcode >> 21) & 0x1f;
 	}
 	else if (f == I_FORMAT) {
-		inst->body.I.imm = (opcode & 0xffff) << 2;
+		inst->body.I.imm = (opcode & 0xffff);
 		inst->body.I.rs = (opcode >> 16) & 0x1f;
 		inst->body.I.rt = (opcode >> 21) & 0x1f;
 	}
 	else if (f == J_FORMAT) {
-		inst->body.J.addr = (opcode & 0x3ffffff) << 2;
+		inst->body.J.addr = (opcode & 0x3ffffff);
 	}
 	return inst;
 }
 
 void printInstruction(INSTRUCTION* inst) {
-	printf("%x: ", BASE_ADDRESS);
 	if (inst->type == R_FORMAT) {
 		printf("%s %s, %s, %s\n", getRInsructionName(inst), REGISTER_NAMES[inst->body.R.rs],
 			REGISTER_NAMES[inst->body.R.rd], REGISTER_NAMES[inst->body.R.rt]);
 	}
 	else if (inst->type == I_FORMAT) {
-		int imm = inst->body.I.imm;
-		printf("%s %s, %s, [pc %c %x]\n", getIJInstructionName(inst->op.ijop, &inst->type), REGISTER_NAMES[inst->body.I.rs],
-			REGISTER_NAMES[inst->body.I.rt], (imm<0) ? '-' : '+', (imm<0) ? -imm : imm);
+		printf("%s %s, %s, 0x%x\n", getIJInstructionName(inst->op.ijop, &inst->type), REGISTER_NAMES[inst->body.I.rs],
+			REGISTER_NAMES[inst->body.I.rt], inst->body.I.imm);
 	}
 	else if (inst->type == J_FORMAT) {
 		int addr = inst->body.J.addr;

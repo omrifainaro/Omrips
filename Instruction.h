@@ -82,10 +82,10 @@ typedef struct {
 		struct {
 			unsigned char rs;
 			unsigned char rt;
-			signed char imm;
+			unsigned char imm;
 		} I;
 		struct {
-			signed int addr;
+			unsigned int addr;
 		} J;
 	} body;
 } INSTRUCTION;
