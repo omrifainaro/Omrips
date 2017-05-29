@@ -33,6 +33,8 @@ int main() {
 	Elf32_Ehdr* elfHeader;
 	Elf32_Shdr* textSection;
 	void* fPointer;
+
+	int fOffset = 0;
 	
 	/////////Open file and load it to memory//////////
 	f = fopen("helloworld", "r+b");
@@ -61,17 +63,17 @@ int main() {
 	/////////Print nessecary data for debugging//////////////
 	printf("Entrypoint: 0x%x\n", entrypoint);
 	printf("Section header offset: 0x%x\n", reverse32(elfHeader->e_shoff));
-	printf("Section header size: 0x%x\n", ___constant_swab16(elfHeader->e_shentsize));
-	printf("Number of entries in the section: 0x%x\n", ___constant_swab16(elfHeader->e_shnum));
-	printf("Size of each entry: 0x%x\n", ___constant_swab16(elfHeader->e_shentsize));
+	printf("Section header size: 0x%x\n", reverse16(elfHeader->e_shentsize));
+	printf("Number of entries in the section: 0x%x\n", reverse16(elfHeader->e_shnum));
+	printf("Size of each entry: 0x%x\n", reverse16(elfHeader->e_shentsize));
 	
 	//////////////////print all names of headers//////////////
 	//print offsets
 	int i = 0;
 	Elf32_Shdr* sh;
 	fPointer = fileContent + reverse32(elfHeader->e_shoff);
-	for(; i < ___constant_swab16(elfHeader->e_shnum); i++){
-		fPointer += ___constant_swab16(elfHeader->e_shentsize);
+	for(; i < reverse16(elfHeader->e_shnum); i++){
+		fPointer += reverse16(elfHeader->e_shentsize);
 		sh = (Elf32_Shdr*) fPointer;
 		if(entrypoint > reverse32(sh->sh_addr) && entrypoint < reverse32(sh->sh_addr) + reverse32(sh->sh_size)){
 			textSection = sh;
@@ -81,7 +83,8 @@ int main() {
 	
 	///////////////////Read first 25 instructions////////////////
 	i = 0;
-	fPointer = fileContent + reverse32(sh->sh_offset);
+	fOffset = reverse32(sh->sh_addr) - reverse32(sh->sh_offset);
+	fPointer = fileContent + entrypoint - fOffset;
 	while(i < 25){
 		i++;
 		printf("\n");
