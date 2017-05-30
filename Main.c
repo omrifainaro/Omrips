@@ -20,7 +20,7 @@ void printBytes(unsigned char* tootim, int size){
 			printf("0");
 		printf("%x", cur);
 	}
-	printf("\n");
+	printf("\t");
 }
 
 int main() {
@@ -33,11 +33,12 @@ int main() {
 	Elf32_Ehdr* elfHeader;
 	Elf32_Shdr* textSection;
 	void* fPointer;
+	int numOpcodes;
 
 	int fOffset = 0;
 	
 	/////////Open file and load it to memory//////////
-	f = fopen("helloworld", "r+b");
+	f = fopen("hello", "r+b");
 	if (f == NULL || ferror(f)) {
 		perror("Error opening file...\n");
 		return -1;
@@ -83,11 +84,13 @@ int main() {
 	
 	///////////////////Read first 25 instructions////////////////
 	i = 0;
-	fOffset = reverse32(sh->sh_addr) - reverse32(sh->sh_offset);
-	fPointer = fileContent + entrypoint - fOffset;
-	while(i < 25){
+	numOpcodes = reverse32(sh->sh_size) / INSTRUCTION_SIZE;
+	fOffset = reverse32(sh->sh_addr); - reverse32(sh->sh_offset);
+	fPointer = fileContent + reverse32(sh->sh_offset);
+	while(i < numOpcodes){
 		i++;
 		printf("\n");
+		printf("0x%lx: ", ((char*)fPointer - (char*)fileContent + fOffset));
 		printBytes(fPointer, INSTRUCTION_SIZE);
 		memcpy(opcode, fPointer, INSTRUCTION_SIZE);
 		reverseString(opcode, INSTRUCTION_SIZE);
