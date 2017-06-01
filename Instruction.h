@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "Constants.h"
 
-static int BASE_ADDRESS = 0x80000000;
+static int BASE_ADDRESS = 0x0;
 
 typedef enum {
 	J = 0x2,
@@ -18,6 +18,7 @@ typedef enum {
 	ANDI = 0xc,
 	ORI = 0xd,
 	XORI = 0xe,
+	LUI = 0xf,
 	MFHI = 0x10,
 	MTHI = 0x11,
 	LHI = 0x19,
@@ -94,6 +95,6 @@ INSTRUCTION* newInstruction(unsigned int opcode);
 void printInstruction(INSTRUCTION* inst);
 char* getIJInstructionName(unsigned char op, format* f);
 char* getRInsructionName(INSTRUCTION* inst);
-static void advancePC() { BASE_ADDRESS += 0x8; }
+static void setPc(int pc) { BASE_ADDRESS = pc; }
 
 #endif

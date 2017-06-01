@@ -91,6 +91,7 @@ int main() {
 		i++;
 		printf("\n");
 		printf("0x%lx: ", ((char*)fPointer - (char*)fileContent + fOffset));
+		setPc((int)((char*)fPointer - (char*)fileContent + fOffset));
 		printBytes(fPointer, INSTRUCTION_SIZE);
 		memcpy(opcode, fPointer, INSTRUCTION_SIZE);
 		reverseString(opcode, INSTRUCTION_SIZE);

@@ -28,6 +28,7 @@ INSTRUCTION* newInstruction(unsigned int opcode) {
 }
 
 void printInstruction(INSTRUCTION* inst) {
+	int addr;
 	if (inst->type == R_FORMAT) {
 		printf("%s %s, %s, %s\n", getRInsructionName(inst), REGISTER_NAMES[inst->body.R.rs],
 			REGISTER_NAMES[inst->body.R.rd], REGISTER_NAMES[inst->body.R.rt]);
@@ -37,7 +38,9 @@ void printInstruction(INSTRUCTION* inst) {
 			REGISTER_NAMES[inst->body.I.rt], inst->body.I.imm);
 	}
 	else if (inst->type == J_FORMAT) {
-		int addr = inst->body.J.addr;
+		addr = inst->body.J.addr;
+		addr = addr << 2;
+		addr = (BASE_ADDRESS & ~0xfffffff) ^ addr;
 		printf("%s 0x%x\n", getIJInstructionName(inst->op.ijop, &inst->type), addr);
 	}
 }
@@ -72,6 +75,9 @@ char* getIJInstructionName(unsigned char op, format* f) {
 	case LHU:
 		*f = I_FORMAT;
 		return "LHU";
+	case LUI:
+		*f = I_FORMAT;
+		return "LUI";
 	case LW:
 		*f = I_FORMAT;
 		return "LW";
