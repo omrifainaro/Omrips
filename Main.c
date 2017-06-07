@@ -27,7 +27,7 @@ int main() {
 	long fsize;	
 	FILE* f;
 	INSTRUCTION* inst;
-	unsigned char* opcode;
+	unsigned int opcode;
 	unsigned int entrypoint;
 	char* fileContent;
 	Elf32_Ehdr* elfHeader;
@@ -49,7 +49,6 @@ int main() {
 	fseek(f, 0, SEEK_SET);
 	
 	fileContent = (char*) malloc(fsize + 1);
-	opcode = (unsigned char*)malloc(INSTRUCTION_SIZE);
 	fileContent = malloc(fsize + 1);	
 
 	fread(fileContent, fsize, 1, f);
@@ -93,15 +92,14 @@ int main() {
 		printf("0x%lx: ", ((char*)fPointer - (char*)fileContent + fOffset));
 		setPc((int)((char*)fPointer - (char*)fileContent + fOffset));
 		printBytes(fPointer, INSTRUCTION_SIZE);
-		memcpy(opcode, fPointer, INSTRUCTION_SIZE);
-		reverseString(opcode, INSTRUCTION_SIZE);
-		inst = newInstruction(*(unsigned int*)opcode);
+		memcpy(&opcode, fPointer, INSTRUCTION_SIZE);
+		opcode = reverse32(opcode);
+		inst = newInstruction(opcode);
 		printInstruction(inst);
 		fPointer += INSTRUCTION_SIZE;
 	}
 	
 	free(inst);
-	free(opcode);
 	free(f);
 	return 0;
 }
