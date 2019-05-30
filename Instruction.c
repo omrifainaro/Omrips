@@ -18,12 +18,6 @@ void printInstruction(INSTRUCTION* inst) {
 			printf("%s 0x%x\n", ijFunctionCode[inst->type.jInstruction.opcode].name, addr);
 			break;
 		default:
-			// printf("\n[debugging] 0x%x, 0x%x, 0x%x, 0x%x\n", 
-			// 	inst->type.iInstruction.opcode, 
-			// 	inst->type.iInstruction.rt, 
-			// 	inst->type.iInstruction.rt, 
-			// 	inst->type.iInstruction.imm);
-
 			printf("%s %s, %s, 0x%x\n", ijFunctionCode[inst->type.iInstruction.opcode].name, REGISTER_NAMES[inst->type.iInstruction.rt],
 			REGISTER_NAMES[inst->type.iInstruction.rt], inst->type.iInstruction.imm);			
 		
