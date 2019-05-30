@@ -8,22 +8,9 @@
 #include <elf.h>
 #include <fcntl.h>
 #include <unistd.h>
+
 #include "Instruction.h"
-#include "Utils.h"
-
-
-void printBytes(unsigned char* tootim, int size){
-	int i = 0;
-	unsigned char cur = 0;
-	printf("opcode: ");
-	for(; i < size; i++){
-		cur = *(tootim+i);
-		if(cur >= 0 && cur <= 9)
-			printf("0");
-		printf("%x", cur);
-	}
-	printf("\t");
-}
+#include "Computer.h"
 
 void* loadFile(char* filename){
 	int fd;
@@ -71,21 +58,27 @@ void dumpAllInstructions(Elf32_Shdr* sh, void* fileBase){
 	void* fPointer = NULL;
 	unsigned int opcode;
 	INSTRUCTION inst;
-	int numOpcodes = REVERSE32(sh->sh_size) / INSTRUCTION_SIZE;
+	//int numOpcodes = REVERSE32(sh->sh_size) / INSTRUCTION_SIZE;
+	int numOpcodes = 20;
 	fOffset = REVERSE32(sh->sh_addr) - REVERSE32(sh->sh_offset);
 	fPointer = fileBase + REVERSE32(sh->sh_offset);
-	while(i < numOpcodes){
-		i++;
-		printf("\n");
-		printf("0x%lx: ", ((char*)fPointer - (char*)fileBase + fOffset));
-		setPc((int)((char*)fPointer - (char*)fileBase + fOffset));
-		printBytes(fPointer, INSTRUCTION_SIZE);
-		memcpy(&opcode, fPointer, INSTRUCTION_SIZE);
-		opcode = REVERSE32(opcode);
+	setPc((char*)((char*)fPointer - (char*)fileBase + fOffset));
+
+	while(i++ < numOpcodes){
+		opcode = REVERSE32(*(unsigned int*) fPointer);
 		memcpy(&inst, &opcode, INSTRUCTION_SIZE);
-		printInstruction(&inst);
+		//printInstruction(&inst);
+		runInstruction(inst);
 		fPointer += INSTRUCTION_SIZE;
 	}
+}
+
+void printDebuggingData(unsigned int entrypoint, Elf32_Ehdr* elfHeader){
+	printf("Entrypoint: 0x%x\n", entrypoint);
+	printf("Section header offset: 0x%x\n", REVERSE32(elfHeader->e_shoff));
+	printf("Section header size: 0x%x\n", REVERSE16(elfHeader->e_shentsize));
+	printf("Number of entries in the section: 0x%x\n", REVERSE16(elfHeader->e_shnum));
+	printf("Size of each entry: 0x%x\n\n", REVERSE16(elfHeader->e_shentsize));
 }
 
 int main(int argc, char* argv[]) {
@@ -107,16 +100,18 @@ int main(int argc, char* argv[]) {
 	entrypoint = REVERSE32(elfHeader->e_entry);
 
 	/////////Print nessecary data for debugging//////////////
-	printf("Entrypoint: 0x%x\n", entrypoint);
-	printf("Section header offset: 0x%x\n", REVERSE32(elfHeader->e_shoff));
-	printf("Section header size: 0x%x\n", REVERSE16(elfHeader->e_shentsize));
-	printf("Number of entries in the section: 0x%x\n", REVERSE16(elfHeader->e_shnum));
-	printf("Size of each entry: 0x%x\n", REVERSE16(elfHeader->e_shentsize));
+	printDebuggingData(entrypoint, elfHeader);
 	
 	//find text section
 	textSection = getTextSection(elfHeader, fileBase, entrypoint);
+
+	//Load and run the code
+	void* va = (void *)(unsigned long)REVERSE32(textSection->sh_addr);
+	void* code = fileBase + REVERSE32(textSection->sh_offset);
+	uint32_t size = REVERSE32(textSection->sh_size);
+	run(va, code, size);
 	
 	///////////////////Read all instructions////////////////
-	dumpAllInstructions(textSection, fileBase);
+	//dumpAllInstructions(textSection, fileBase);
 	return 0;
 }
