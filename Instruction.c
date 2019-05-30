@@ -1,12 +1,7 @@
 #include "Instruction.h"
 //http://www.mrc.uidaho.edu/mrc/people/jff/digital/MIPSir.html all instructions
 
-INSTRUCTION* newInstruction(unsigned int opcode) {
-	INSTRUCTION* inst;
-	inst = (INSTRUCTION*)malloc(sizeof(INSTRUCTION));
-	memcpy(inst, &opcode, INSTRUCTION_SIZE);
-	return inst;
-}
+int BASE_ADDRESS = 0x0;
 
 void printInstruction(INSTRUCTION* inst) {
 	int addr;
@@ -23,8 +18,18 @@ void printInstruction(INSTRUCTION* inst) {
 			printf("%s 0x%x\n", ijFunctionCode[inst->type.jInstruction.opcode].name, addr);
 			break;
 		default:
-			printf("%s %s, %s, %d\n", ijFunctionCode[inst->type.iInstruction.opcode].name, REGISTER_NAMES[inst->type.iInstruction.rt],
+			// printf("\n[debugging] 0x%x, 0x%x, 0x%x, 0x%x\n", 
+			// 	inst->type.iInstruction.opcode, 
+			// 	inst->type.iInstruction.rt, 
+			// 	inst->type.iInstruction.rt, 
+			// 	inst->type.iInstruction.imm);
+
+			printf("%s %s, %s, 0x%x\n", ijFunctionCode[inst->type.iInstruction.opcode].name, REGISTER_NAMES[inst->type.iInstruction.rt],
 			REGISTER_NAMES[inst->type.iInstruction.rt], inst->type.iInstruction.imm);			
 		
 	}
+}
+
+void setPc(unsigned int pc) { 
+	BASE_ADDRESS = pc; 
 }

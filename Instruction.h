@@ -8,7 +8,7 @@
 #define BIGGEST_OPCODE_R 43
 #define BIGGEST_OPCODE_IJ 44
 
-static int BASE_ADDRESS = 0x0;
+extern int BASE_ADDRESS;
 
 typedef struct {
 	unsigned int func:6;
@@ -137,8 +137,7 @@ static INST_INFO ijFunctionCode[BIGGEST_OPCODE_IJ] = {
 	{0x2b, "SW"}
 };
 
-INSTRUCTION* newInstruction(unsigned int opcode);
 void printInstruction(INSTRUCTION* inst);
-static void setPc(int pc) { BASE_ADDRESS = pc; }
+void setPc(unsigned int pc);
 
 #endif
