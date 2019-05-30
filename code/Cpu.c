@@ -19,8 +19,11 @@ static int runITypeInstruction(INSTRUCTION inst){
 	}
 }
 
-static int runJTypeInstruction(INSTRUCTION inst){
+static int runJTypeInstruction(INSTRUCTION inst, unsigned long addr){
 	switch(inst.type.jInstruction.opcode){
+		case 0x2:
+			setPc((void*)addr);
+			break;
 		default:
 			printf("%s not supported yet\n\n", ijFunctionCode[inst.type.jInstruction.opcode].name);
 			return UNSPORTED_INSTRUCTION;		
@@ -28,6 +31,7 @@ static int runJTypeInstruction(INSTRUCTION inst){
 }
 
 int runInstruction(INSTRUCTION inst){
+	unsigned int addr;
 	printf("%p: ", cpu.pc);
 	printInstruction(&inst, (unsigned long) cpu.pc);
 	cpu.pc += INSTRUCTION_SIZE;	
@@ -36,10 +40,8 @@ int runInstruction(INSTRUCTION inst){
 			return runRTypeInstruction(inst);
 		case 2:
 		case 3:
-			return runJTypeInstruction(inst);
-			// addr = inst->type.jInstruction.addr;
-			// addr = addr << 2;
-			// addr = (BASE_ADDRESS & ~0xfffffff) ^ addr;
+			addr = ((unsigned long)cpu.pc & ~0xfffffff) ^ inst.type.jInstruction.addr << 2;
+			return runJTypeInstruction(inst, addr);
 			// printf("%s 0x%x\n", ijFunctionCode[inst->type.jInstruction.opcode].name, addr);
 			break;
 		default:

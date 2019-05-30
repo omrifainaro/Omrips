@@ -6,7 +6,7 @@ void run(void* va, void* code, uint32_t size) {
 	INSTRUCTION inst;
 	setPc((void *) procCode.virtualMemory);
 
-	for (int i = 0; i < 20; ++i) {
+	for (int i = 0; i < size/INSTRUCTION_SIZE; ++i) {
 		opcode = REVERSE32(*(unsigned int*) getVirtualMemory(procCode, cpu.pc));
 		memcpy(&inst, &opcode, INSTRUCTION_SIZE);
 		runInstruction(inst);

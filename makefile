@@ -7,4 +7,4 @@ run: mipsEmulator examples/hello
 	./mipsEmulator examples/hello
 
 clean:
-	$(RM) omrips
+	$(RM) mipsEmulator
